@@ -1,0 +1,88 @@
+# ==============================================
+#  CaptureEgg 訊息檔
+#  顏色代碼使用 & （例如 &a），也支援 &#RRGGBB
+#  留空 "" 代表不顯示該訊息
+#  缺少的項目會在啟動與 /captureegg reload 時自動補上
+# ==============================================
+
+prefix: "&8[&6CaptureEgg&8] &r"
+
+capture:
+  # {entity} 生物種類（依玩家的遊戲語言顯示）
+  success: "&a成功捕捉 &e{entity}&a！"
+
+deny:
+  no-permission: "&c你沒有權限捕捉生物。"
+  world: "&c這個世界不能捕捉生物。"
+  blacklist: "&c{entity} 不能被捕捉。"
+  npc: "&cNPC 不能被捕捉。"
+  # {owner} 寵物主人名稱
+  others-pet: "&c這是 &e{owner} &c的寵物，你不能捕捉。"
+  protected: "&c你在這個領地沒有權限捕捉 &e{entity}&c。"
+  baby: "&c不能捕捉幼年生物。"
+  named: "&c不能捕捉已命名的生物。"
+  no-spawn-egg: "&c{entity} 沒有對應的生怪蛋，無法捕捉。"
+  # {size} 這隻生物的資料大小（KB）、{max} 上限（KB）
+  too-large: "&c{entity} 身上的資料太大（{size} KB，上限 {max} KB），請先清空牠的背包再捕捉。"
+  error: "&c捕捉失敗，生物沒有受到影響。"
+
+release:
+  success: "&a已放出 &e{entity}&a。"
+  no-permission: "&c你沒有權限放出捕捉蛋裡的生物。"
+  spawner: "&c捕捉蛋不能用在生怪磚上。"
+  on-entity: "&c捕捉蛋不能對生物使用，請對方塊按右鍵放出。"
+  failed: "&c無法在這裡放出生物。"
+  peaceful: "&c和平難度下不能放出 &e{entity}&c，捕捉蛋已保留。"
+  corrupted: "&c這顆捕捉蛋的資料已損壞，無法放出。"
+
+item:
+  # 生物沒有名稱時，捕捉蛋的物品名稱（生物有名稱時，捕捉蛋直接使用生物的名稱）
+  name: "&e{entity} &7捕捉蛋"
+  # 一般 Lore；可用變數：{entity} {player} {time} {health} {max_health}
+  lore:
+    - "&7生物：&f{entity}"
+    - "&7血量：&f{health} &7/ &f{max_health}"
+    - "&7捕捉者：&f{player}"
+    - "&7時間：&f{time}"
+    - ""
+    - "&8對方塊按右鍵放出原本的生物"
+  # 村民額外 Lore（插在一般 Lore 第一行後面）；可用變數：{profession} {level} {trades}
+  lore-villager:
+    - "&7職業：&f{profession} &7(等級 {level})"
+    - "&7交易數：&f{trades}"
+  # 已馴服的寵物額外 Lore；可用變數：{owner}
+  lore-tamed:
+    - "&7主人：&f{owner}"
+  # 幼年生物額外 Lore
+  lore-baby:
+    - "&7幼年"
+  unknown-owner: "未知"
+  # 時間格式（Java DateTimeFormatter）
+  time-format: "yyyy-MM-dd HH:mm"
+
+command:
+  help:
+    - "&6&lCaptureEgg &7v{version}"
+    - "&7丟雞蛋打中生物就能把牠包成捕捉蛋，對方塊按右鍵放出原本那一隻。"
+  help-version: "&e/{label} version &7- 檢查更新"
+  help-reload: "&e/{label} reload &7- 重新載入設定檔與訊息檔"
+  no-permission: "&c你沒有權限使用這個指令。"
+  unknown: "&c未知的子指令，輸入 &e/{label} &c查看說明。"
+  reloaded: "&a已重新載入 config.yml 與 messages.yml。"
+  reload-failed: "&c設定檔格式錯誤，已改用預設值，詳情請看主控台。"
+
+update:
+  checking: "&7正在檢查更新…"
+  current: "&7目前版本：&fv{current}"
+  new-version: "&e有新版本 &av{latest}&e！下載：&f{url}"
+  up-to-date: "&a目前已是最新版本。"
+  dev-build: "&b目前版本比 GitHub 新（開發版）。最新發布版本：v{latest}"
+  no-release: "&7GitHub 上還沒有發布任何版本。"
+  failed: "&c無法檢查更新，請稍後再試。"
+  join-notify: "&eCaptureEgg 有新版本 &av{latest}&e（目前 v{current}），下載：&f{url}"
+  # 以下輸出到主控台
+  console-new-version: "有新版本 v{latest}（目前 v{current}）：{url}"
+  console-up-to-date: "目前已是最新版本 v{current}。"
+  console-dev-build: "目前版本 v{current} 比 GitHub 最新發布版本 v{latest} 新（開發版）。"
+  console-no-release: "GitHub 上還沒有發布任何版本。"
+  console-failed: "無法檢查更新：{error}"
