@@ -1,0 +1,56 @@
+# ==============================================
+#  CaptureEgg 設定檔
+#  缺少的項目會在啟動與 /captureegg reload 時自動補上
+# ==============================================
+
+capture:
+  # 捕捉前檢查領地/保護插件（GriefPrevention、Lands、WorldGuard、Towny、Residence 等）
+  # 只有能攻擊該生物的玩家（地主、受信任的玩家）才能捕捉
+  check-protection: true
+  # 是否可以捕捉「別人」馴服的寵物（自己的寵物一律可以）
+  allow-others-pets: false
+  # 是否禁止捕捉幼年生物
+  prevent-baby: false
+  # 是否禁止捕捉已命名的生物
+  prevent-named: false
+  # 捕捉蛋放到哪裡：ground = 掉在生物原本的位置；inventory = 直接放進丟蛋玩家的背包（滿了就掉在玩家腳下）
+  drop-mode: ground
+  # 同一位玩家「無法捕捉」提示的最短間隔（秒），避免連丟洗頻
+  deny-message-cooldown: 1
+  # 單顆捕捉蛋可儲存的生物資料上限（KB，4 ~ 512）
+  # 背包裡塞滿界伏盒、或捕捉蛋層層套在生物背包裡時資料會非常大，超過上限就拒絕捕捉，
+  # 避免物品過大造成玩家被踢出或區塊損壞
+  max-data-kb: 64
+  # 不能被捕捉的生物（填實體 ID，例如 ZOMBIE 或 minecraft:zombie）
+  entity-blacklist:
+    - ENDER_DRAGON
+    - WITHER
+    - ELDER_GUARDIAN
+    - WARDEN
+    - ARMOR_STAND
+
+worlds:
+  # blacklist = 列出的世界不能捕捉；whitelist = 只有列出的世界能捕捉
+  mode: blacklist
+  list: []
+
+release:
+  # 發射器射出捕捉蛋時，放出原本的生物
+  dispenser: true
+
+compatibility:
+  # 可放出 EggEmAll2 捕捉的生怪蛋（玩家身上的舊蛋）
+  # 舊蛋沒有自訂名稱時，生物保留原本的名稱；有用鐵砧改名則使用新名稱
+  eggemall2: true
+
+effects:
+  # 捕捉成功時的粒子與音效
+  capture: true
+  # 放出生物時的粒子與音效
+  release: true
+
+update-checker:
+  # 伺服器啟動時在背景檢查 GitHub 新版本，結果輸出到主控台
+  check-on-startup: true
+  # 有新版本時，具備 captureegg.version 權限的管理員登入 3 秒後收到提醒
+  notify-on-join: true

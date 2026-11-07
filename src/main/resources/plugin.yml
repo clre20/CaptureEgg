@@ -1,0 +1,48 @@
+name: CaptureEgg
+description: 用雞蛋把生物包成生怪蛋，放出來還是原本那一隻
+prefix: CaptureEgg
+version: '${version}'
+
+main: clre20.captureEgg.CaptureEgg
+api-version: '26.1.1'
+load: POSTWORLD
+
+authors: [ Clre20 ]
+website: https://github.com/clre20/CaptureEgg
+
+commands:
+  captureegg:
+    description: CaptureEgg 主指令
+    usage: /<command> [help|version|reload]
+    aliases: [ ce ]
+    permission: captureegg.use
+
+permissions:
+  captureegg.*:
+    description: CaptureEgg 全部權限
+    default: op
+    children:
+      captureegg.use: true
+      captureegg.capture: true
+      captureegg.release: true
+      captureegg.bypass.tamed: true
+      captureegg.version: true
+      captureegg.reload: true
+  captureegg.use:
+    description: 使用 /captureegg 查看說明
+    default: true
+  captureegg.capture:
+    description: 用雞蛋捕捉生物
+    default: true
+  captureegg.release:
+    description: 放出捕捉蛋裡的生物
+    default: true
+  captureegg.bypass.tamed:
+    description: 可以捕捉別人馴服的寵物
+    default: op
+  captureegg.version:
+    description: 檢查更新，並在登入時收到新版本提醒
+    default: op
+  captureegg.reload:
+    description: 重新載入 config.yml 與 messages.yml
+    default: op
