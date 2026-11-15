@@ -18,16 +18,18 @@
   - 發射器射出捕捉蛋，同樣放出原本那一隻
   - 對箱子、門等方塊按右鍵照常開啟；蹲下按右鍵才會放出
 - **防濫用**：
-  - 捕捉蛋不能用在生怪磚上、不能對生物使用、不能對空氣使用
+  - 空手右鍵生怪磚可以取出生物變成捕捉蛋（捕捉者是點擊的玩家），再拿蛋右鍵空的生怪磚就能放回去
+  - 捕捉蛋可以放進空的生怪磚，設定成蛋裡的生物（可關閉；已有生物的生怪磚與試煉生怪磚不能改）；不能對生物使用、不能對空氣使用
   - 領地中只有地主或有權限的玩家能抓（支援 GriefPrevention、Lands、WorldGuard、Towny、Residence 等，不需額外相依）
   - 別人馴服的寵物不能抓，自己的可以
   - Boss 類生物、盔甲座、NPC 不能抓
+  - MythicMobs 生物、其他插件產生的臨時生物不能抓
   - 單顆捕捉蛋資料有上限，防止塞滿界伏盒的生物變成超大物品造成踢人或區塊損壞
   - 掉在地上的捕捉蛋不會被岩漿、火、爆炸摧毀
 - **相容 EggEmAll2 舊蛋**：
   - 從 EggEmAll2 換過來，玩家身上原本的蛋照樣能放出，資料完整保留
   - 1.20.5～1.21.4 時期抓的蛋會自動升級成新格式（名稱、裝備不會跑掉）
-  - 舊蛋同樣不能用在生怪磚上
+  - 舊蛋同樣可以放進空的生怪磚
 - **自動更新檢查**：
   - 啟動時在背景檢查 GitHub 新版本
   - 有新版本時，管理員登入 3 秒後收到提醒
@@ -42,6 +44,8 @@
 | `/captureegg reload` | 重新載入 config.yml 與 messages.yml | 玩家／主控台 | `captureegg.reload` | OP |
 | （丟雞蛋） | 捕捉生物 | 玩家 | `captureegg.capture` | 所有人 |
 | （右鍵捕捉蛋） | 放出生物 | 玩家 | `captureegg.release` | 所有人 |
+| （對空的生怪磚右鍵捕捉蛋） | 放進生怪磚 | 玩家 | `captureegg.spawner` | 所有人 |
+| （空手右鍵生怪磚） | 取出生物變成捕捉蛋 | 玩家 | `captureegg.spawner` | 所有人 |
 | — | 可以捕捉別人的寵物 | 玩家 | `captureegg.bypass.tamed` | OP |
 | — | 以上全部 | — | `captureegg.*` | OP |
 
@@ -73,9 +77,12 @@
 | `capture.drop-mode` | `ground` 掉在原地；`inventory` 直接進背包 |
 | `capture.deny-message-cooldown` | 拒絕提示的最短間隔（秒） |
 | `capture.max-data-kb` | 單顆捕捉蛋的資料上限（KB） |
+| `capture.block-mythicmobs` | 禁止捕捉 MythicMobs 生物 |
 | `capture.entity-blacklist` | 不能捕捉的生物 |
 | `worlds.mode` / `worlds.list` | 世界黑名單或白名單 |
 | `release.dispenser` | 發射器是否放出捕捉蛋裡的生物 |
+| `release.spawner` | 捕捉蛋能否放進空的生怪磚 |
+| `release.spawner-extract` | 能否空手右鍵從生怪磚取出生物 |
 | `compatibility.eggemall2` | 是否可放出 EggEmAll2 的舊蛋 |
 | `effects.capture` / `effects.release` | 粒子與音效 |
 | `update-checker.check-on-startup` | 啟動時檢查更新 |
@@ -116,16 +123,18 @@ Throw an egg to turn a mob into a spawn egg, and get the very same mob back when
   - Dispensers release the original mob too
   - Containers and doors still open normally; sneak to release on them
 - **Abuse protection**:
-  - Eggs can't be used on spawners, on mobs or in the air
+  - Right-click a spawner with an empty hand to take its mob out as an egg (the clicker is the catcher); right-click an empty spawner with the egg to put it back
+  - Eggs can be put into empty spawners to set their mob (can be disabled; spawners that already have a mob and trial spawners can't be changed); eggs can't be used on mobs or in the air
   - In claims, only owners and trusted players can capture (works with GriefPrevention, Lands, WorldGuard, Towny, Residence and more, no hard dependency)
   - Other players' pets can't be captured; your own can
   - Bosses, armor stands and NPCs can't be captured
+  - MythicMobs mobs and temporary (non-persistent) mobs from other plugins can't be captured
   - Per-egg data size limit stops oversized items that could kick players or corrupt chunks
   - Dropped capture eggs survive lava, fire and explosions
 - **EggEmAll2 compatibility**:
   - Switching from EggEmAll2? Players' existing eggs still release, with all data kept
   - Eggs caught on 1.20.5–1.21.4 are upgraded automatically (names and equipment stay correct)
-  - Old eggs are also blocked on spawners
+  - Old eggs can fill empty spawners too
 - **Update checker**:
   - Checks GitHub for new versions in the background on startup
   - Admins are notified 3 seconds after joining
@@ -140,6 +149,8 @@ The primary command is `/captureegg`.
 | `/captureegg reload` | Reload config.yml and messages.yml | Player / Console | `captureegg.reload` | OP |
 | (throw egg) | Capture a mob | Player | `captureegg.capture` | Everyone |
 | (right-click egg) | Release a mob | Player | `captureegg.release` | Everyone |
+| (right-click egg on empty spawner) | Fill spawner | Player | `captureegg.spawner` | Everyone |
+| (right-click spawner with empty hand) | Take the mob out as an egg | Player | `captureegg.spawner` | Everyone |
 | — | Capture other players' pets | Player | `captureegg.bypass.tamed` | OP |
 | — | All of the above | — | `captureegg.*` | OP |
 
@@ -171,9 +182,12 @@ The primary command is `/captureegg`.
 | `capture.drop-mode` | `ground` drops in place; `inventory` goes to the thrower |
 | `capture.deny-message-cooldown` | Minimum seconds between denial messages |
 | `capture.max-data-kb` | Max stored data per egg (KB) |
+| `capture.block-mythicmobs` | Block capturing MythicMobs mobs |
 | `capture.entity-blacklist` | Mobs that can't be captured |
 | `worlds.mode` / `worlds.list` | World blacklist or whitelist |
 | `release.dispenser` | Whether dispensers release captured mobs |
+| `release.spawner` | Whether eggs can be put into empty spawners |
+| `release.spawner-extract` | Whether players can take mobs out of spawners with an empty hand |
 | `compatibility.eggemall2` | Allow releasing old EggEmAll2 eggs |
 | `effects.capture` / `effects.release` | Particles and sounds |
 | `update-checker.check-on-startup` | Check for updates on startup |
