@@ -1,6 +1,9 @@
 # CaptureEgg
 丟雞蛋把生物包成生怪蛋，放出來還是原本那一隻——村民的交易、等級、名稱、背包全部保留。
 
+
+> **版本檢查提示**：若伺服器有安裝 [HttpHub](https://github.com/clre20/HttpHub)，本插件自動由 HttpHub 集中處理版本檢查與管理員登入通知，避免各插件自開連線與背景執行緒。
+
 ## 功能特性
 - **雞蛋捕捉**：
   - 玩家丟出的雞蛋打中生物，100% 捕捉成對應種類的生怪蛋
@@ -105,6 +108,9 @@
 
 # CaptureEgg
 Throw an egg to turn a mob into a spawn egg, and get the very same mob back when you release it — villager trades, levels, names and inventories are all kept.
+
+> **Update Checker**: When [HttpHub](https://github.com/clre20/HttpHub) is installed, update checks and operator login alerts are handled centrally by HttpHub via virtual threads, preventing redundant background connections.
+
 
 ## Features
 - **Egg capture**:

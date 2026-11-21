@@ -46,3 +46,5 @@ permissions:
   captureegg.reload:
     description: 重新載入 config.yml 與 messages.yml
     default: op
+
+softdepend: [ HttpHub ]

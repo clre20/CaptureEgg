@@ -48,7 +48,9 @@ public final class CaptureEgg extends JavaPlugin {
             cmd.setTabCompleter(executor);
         }
 
-        if (settings.checkOnStartup()) {
+        if (getServer().getPluginManager().isPluginEnabled("HttpHub") && clre20.httpHub.api.HttpHubAPI.isAvailable()) {
+            clre20.httpHub.api.HttpHubAPI.registerUpdateCheck(this, "clre20/CaptureEgg", getPluginMeta().getVersion(), "captureegg.version", null);
+        } else if (settings.checkOnStartup()) {
             updateChecker.check(result -> {
                 String path = switch (result.status()) {
                     case NEW_VERSION -> "update.console-new-version";
