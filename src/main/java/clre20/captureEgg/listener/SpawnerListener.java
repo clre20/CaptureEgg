@@ -133,7 +133,8 @@ public final class SpawnerListener implements Listener {
                 return;
             }
 
-            ItemStack egg = service.buildSpawnerExtractedEgg(eggMat, spawnedType, player, clicked.getWorld());
+            org.bukkit.entity.EntitySnapshot snapshot = spawner.getSpawnedEntity();
+            ItemStack egg = service.buildSpawnerExtractedEgg(eggMat, spawnedType, snapshot, player, clicked.getWorld());
             if (egg == null) {
                 plugin.messages().send(player, "deny.error");
                 return;

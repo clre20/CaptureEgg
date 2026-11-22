@@ -4,6 +4,7 @@ import clre20.captureEgg.CaptureEgg;
 import clre20.captureEgg.config.Messages;
 import clre20.captureEgg.config.Settings;
 import clre20.captureEgg.util.Text;
+import io.papermc.paper.entity.EntitySerializationFlag;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -162,11 +163,17 @@ public final class CaptureService {
     }
 
     public ItemStack buildSpawnerExtractedEgg(Material eggType, org.bukkit.entity.EntityType spawnedType, Player extractor, World world) {
+        return buildSpawnerExtractedEgg(eggType, spawnedType, null, extractor, world);
+    }
+
+    public ItemStack buildSpawnerExtractedEgg(Material eggType, org.bukkit.entity.EntityType spawnedType, org.bukkit.entity.EntitySnapshot snapshot, Player extractor, World world) {
         try {
-            org.bukkit.entity.EntitySnapshot snapshot = Bukkit.getEntityFactory().createEntitySnapshot("{id:\"" + spawnedType.getKey().toString() + "\"}");
+            if (snapshot == null || snapshot.getEntityType() != spawnedType) {
+                snapshot = Bukkit.getEntityFactory().createEntitySnapshot("{id:\"" + spawnedType.getKey().toString() + "\"}");
+            }
             Entity dummy = snapshot.createEntity(world);
             if (dummy instanceof LivingEntity living) {
-                byte[] data = Bukkit.getUnsafe().serializeEntity(living);
+                byte[] data = Bukkit.getUnsafe().serializeEntity(living, EntitySerializationFlag.FORCE);
                 ItemStack egg = buildEgg(eggType, living, extractor, data);
                 egg.editMeta(meta -> {
                     meta.getPersistentDataContainer().set(keyNative, PersistentDataType.BYTE, (byte) 1);
@@ -273,7 +280,7 @@ public final class CaptureService {
 
         byte[] data;
         try {
-            data = Bukkit.getUnsafe().serializeEntity(target);
+            data = Bukkit.getUnsafe().serializeEntity(target, EntitySerializationFlag.FORCE);
         } catch (RuntimeException e) {
             plugin.getLogger().log(Level.WARNING, "無法序列化生物 " + target.getType() + "，取消捕捉", e);
             deny(player, "deny.error", vars);
