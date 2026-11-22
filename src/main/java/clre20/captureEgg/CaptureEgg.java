@@ -2,6 +2,8 @@ package clre20.captureEgg;
 
 import clre20.captureEgg.capture.CaptureService;
 import clre20.captureEgg.command.CaptureEggCommand;
+import clre20.captureEgg.compatibility.MythicMobsHook;
+import clre20.captureEgg.listener.SpawnerListener;
 import clre20.captureEgg.config.Messages;
 import clre20.captureEgg.config.Settings;
 import clre20.captureEgg.config.YamlFile;
@@ -25,6 +27,7 @@ public final class CaptureEgg extends JavaPlugin {
     private CaptureService captureService;
     private UpdateChecker updateChecker;
     private PlayerListener playerListener;
+    private MythicMobsHook mythicMobsHook;
 
     @Override
     public void onEnable() {
@@ -33,12 +36,15 @@ public final class CaptureEgg extends JavaPlugin {
         messages = new Messages(messagesFile);
         reloadAll();
 
+        mythicMobsHook = new MythicMobsHook();
+        mythicMobsHook.init(getLogger());
         captureService = new CaptureService(this);
         updateChecker = new UpdateChecker(this);
         playerListener = new PlayerListener(this);
 
         getServer().getPluginManager().registerEvents(new CaptureListener(captureService), this);
         getServer().getPluginManager().registerEvents(new ReleaseListener(this, captureService), this);
+        getServer().getPluginManager().registerEvents(new SpawnerListener(this, captureService), this);
         getServer().getPluginManager().registerEvents(playerListener, this);
 
         PluginCommand cmd = getCommand("captureegg");
@@ -78,6 +84,9 @@ public final class CaptureEgg extends JavaPlugin {
         if (captureService != null) {
             captureService.clear();
         }
+        if (mythicMobsHook != null) {
+            mythicMobsHook.clear();
+        }
         if (updateChecker != null) {
             updateChecker.shutdown();
         }
@@ -114,5 +123,9 @@ public final class CaptureEgg extends JavaPlugin {
 
     public UpdateChecker updateChecker() {
         return updateChecker;
+    }
+
+    public MythicMobsHook mythicMobsHook() {
+        return mythicMobsHook;
     }
 }

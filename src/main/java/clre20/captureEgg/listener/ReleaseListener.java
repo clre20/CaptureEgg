@@ -58,9 +58,13 @@ public final class ReleaseListener implements Listener {
             return;
         }
         Material type = clicked.getType();
-        if (type == Material.SPAWNER || type == Material.TRIAL_SPAWNER) {
+        if (type == Material.SPAWNER) {
+            // 生怪磚的放入與取出由 SpawnerListener 專責處理
+            return;
+        }
+        if (type == Material.TRIAL_SPAWNER) {
             event.setCancelled(true);
-            plugin.messages().send(player, "release.spawner");
+            plugin.messages().send(player, "release.trial-spawner");
             return;
         }
         // 箱子、門等可互動方塊：沒蹲下時照常開啟方塊，不放出

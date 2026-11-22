@@ -16,6 +16,9 @@ deny:
   world: "&c這個世界不能捕捉生物。"
   blacklist: "&c{entity} 不能被捕捉。"
   npc: "&cNPC 不能被捕捉。"
+  mythic: "&cMythicMobs 生物不能被捕捉。"
+  trial-spawner: "&c試煉生怪磚生成的生物不能被捕捉。"
+  spawner-mob: "&c生怪磚生成的生物不能被捕捉。"
   # {owner} 寵物主人名稱
   others-pet: "&c這是 &e{owner} &c的寵物，你不能捕捉。"
   protected: "&c你在這個領地沒有權限捕捉 &e{entity}&c。"
@@ -30,6 +33,7 @@ release:
   success: "&a已放出 &e{entity}&a。"
   no-permission: "&c你沒有權限放出捕捉蛋裡的生物。"
   spawner: "&c捕捉蛋不能用在生怪磚上。"
+  trial-spawner: "&c試煉生怪磚不能更換或取出蛋！"
   on-entity: "&c捕捉蛋不能對生物使用，請對方塊按右鍵放出。"
   failed: "&c無法在這裡放出生物。"
   peaceful: "&c和平難度下不能放出 &e{entity}&c，捕捉蛋已保留。"
@@ -86,3 +90,12 @@ update:
   console-dev-build: "目前版本 v{current} 比 GitHub 最新發布版本 v{latest} 新（開發版）。"
   console-no-release: "GitHub 上還沒有發布任何版本。"
   console-failed: "無法檢查更新：{error}"
+
+spawner:
+  empty: "&c此生怪磚目前是空的，沒有蛋可取出。"
+  already-has-mob: "&c此生怪磚已有生物蛋，請先空手右鍵取出原本的蛋！"
+  not-native: "&c只有原生的生物蛋才能放入生怪磚！"
+  extract-success: "&a成功從生怪磚取出 &e{entity} &a捕捉蛋！"
+  insert-success: "&a已成功將 &e{entity} &a放入生怪磚！"
+  no-extract-permission: "&c你沒有權限從生怪磚取出蛋。"
+  no-insert-permission: "&c你沒有權限將蛋放入生怪磚。"

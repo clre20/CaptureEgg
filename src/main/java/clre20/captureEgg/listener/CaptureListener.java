@@ -8,7 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.persistence.PersistentDataType;
 
 /** 玩家丟出的雞蛋打中生物 → 捕捉。 */
 public final class CaptureListener implements Listener {
@@ -37,4 +39,17 @@ public final class CaptureListener implements Listener {
         egg.remove();
         service.tryCapture(player, target);
     }
+
+    /** 記錄生物生成來源（生怪磚、試煉生怪磚），供捕捉時判斷。 */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        LivingEntity entity = event.getEntity();
+        CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
+        if (reason == CreatureSpawnEvent.SpawnReason.SPAWNER) {
+            entity.getPersistentDataContainer().set(service.getKeySpawner(), PersistentDataType.BYTE, (byte) 1);
+        } else if (reason == CreatureSpawnEvent.SpawnReason.TRIAL_SPAWNER) {
+            entity.getPersistentDataContainer().set(service.getKeyTrialSpawner(), PersistentDataType.BYTE, (byte) 1);
+        }
+    }
+
 }

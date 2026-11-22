@@ -57,6 +57,9 @@ public final class CaptureService {
     private final NamespacedKey keyData;
     private final NamespacedKey keyType;
     private final NamespacedKey keyFormat;
+    private final NamespacedKey keySpawner;
+    private final NamespacedKey keyTrialSpawner;
+    private final NamespacedKey keyNative;
     /** EggEmAll2 的捕捉蛋：生物以 SNBT 字串（EntitySnapshot）存在這個鍵。只讀取，不會產生這種蛋。 */
     private final NamespacedKey keyLegacyEggEmAll;
     private final Set<Material> spawnEggs = EnumSet.noneOf(Material.class);
@@ -68,6 +71,9 @@ public final class CaptureService {
         this.keyData = new NamespacedKey(plugin, "entity");
         this.keyType = new NamespacedKey(plugin, "type");
         this.keyFormat = new NamespacedKey(plugin, "format");
+        this.keySpawner = new NamespacedKey(plugin, "from_spawner");
+        this.keyTrialSpawner = new NamespacedKey(plugin, "from_trial_spawner");
+        this.keyNative = new NamespacedKey(plugin, "native");
         this.keyLegacyEggEmAll = new NamespacedKey("eggemall2", "eggemall_entity_data");
         for (Material m : Material.values()) {
             if (!m.isLegacy() && m.isItem() && m.name().endsWith("_SPAWN_EGG")) {
@@ -82,6 +88,95 @@ public final class CaptureService {
 
     private Messages messages() {
         return plugin.messages();
+    }
+
+    public NamespacedKey getKeySpawner() {
+        return keySpawner;
+    }
+
+    public NamespacedKey getKeyTrialSpawner() {
+        return keyTrialSpawner;
+    }
+
+    public NamespacedKey getKeyNative() {
+        return keyNative;
+    }
+
+    public boolean isMythicMob(Entity entity) {
+        if (plugin.mythicMobsHook() != null && plugin.mythicMobsHook().isMythicMob(entity)) {
+            return true;
+        }
+        return entity.getPersistentDataContainer().getKeys().contains(new NamespacedKey("mythicmobs", "type"));
+    }
+
+    public boolean isTrialSpawnerMob(Entity entity) {
+        if (entity.getEntitySpawnReason() == CreatureSpawnEvent.SpawnReason.TRIAL_SPAWNER) {
+            return true;
+        }
+        return entity.getPersistentDataContainer().has(keyTrialSpawner, PersistentDataType.BYTE);
+    }
+
+    public boolean isSpawnerMob(Entity entity) {
+        if (entity.fromMobSpawner() || entity.getEntitySpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
+            return true;
+        }
+        return entity.getPersistentDataContainer().has(keySpawner, PersistentDataType.BYTE);
+    }
+
+    public boolean isNativeEgg(ItemStack item) {
+        if (!isCaptureEgg(item)) {
+            return false;
+        }
+        var pdc = item.getItemMeta().getPersistentDataContainer();
+        Byte b = pdc.get(keyNative, PersistentDataType.BYTE);
+        if (b != null && b == (byte) 1) {
+            return true;
+        }
+        byte[] data = pdc.get(keyData, PersistentDataType.BYTE_ARRAY);
+        if (data != null && data.length > 0) {
+            String s = new String(data, java.nio.charset.StandardCharsets.ISO_8859_1);
+            return !s.contains("mythicmobs") && !s.contains("from_spawner") && !s.contains("from_trial_spawner") && !s.contains("fromMobSpawner");
+        }
+        return false;
+    }
+
+    public org.bukkit.entity.EntityType getEntityType(ItemStack egg) {
+        if (egg == null) return null;
+        var pdc = egg.getItemMeta().getPersistentDataContainer();
+        String raw = pdc.get(keyType, PersistentDataType.STRING);
+        if (raw != null) {
+            NamespacedKey key = NamespacedKey.fromString(raw);
+            if (key != null) {
+                org.bukkit.entity.EntityType type = org.bukkit.Registry.ENTITY_TYPE.get(key);
+                if (type != null) {
+                    return type;
+                }
+            }
+        }
+        String eggName = egg.getType().getKey().getKey();
+        if (eggName.endsWith("_spawn_egg")) {
+            return org.bukkit.Registry.ENTITY_TYPE.get(
+                    NamespacedKey.minecraft(eggName.substring(0, eggName.length() - "_spawn_egg".length())));
+        }
+        return null;
+    }
+
+    public ItemStack buildSpawnerExtractedEgg(Material eggType, org.bukkit.entity.EntityType spawnedType, Player extractor, World world) {
+        try {
+            org.bukkit.entity.EntitySnapshot snapshot = Bukkit.getEntityFactory().createEntitySnapshot("{id:\"" + spawnedType.getKey().toString() + "\"}");
+            Entity dummy = snapshot.createEntity(world);
+            if (dummy instanceof LivingEntity living) {
+                byte[] data = Bukkit.getUnsafe().serializeEntity(living);
+                ItemStack egg = buildEgg(eggType, living, extractor, data);
+                egg.editMeta(meta -> {
+                    meta.getPersistentDataContainer().set(keyNative, PersistentDataType.BYTE, (byte) 1);
+                });
+                return egg;
+            }
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.WARNING, "從生怪磚提取生物 " + spawnedType + " 失敗", e);
+        }
+        return null;
     }
 
     // ------------------------------------------------------------------ 判斷
@@ -125,6 +220,18 @@ public final class CaptureService {
         }
         if (target.hasMetadata("NPC")) {
             deny(player, "deny.npc", vars);
+            return;
+        }
+        if (isMythicMob(target)) {
+            deny(player, "deny.mythic", vars);
+            return;
+        }
+        if (isTrialSpawnerMob(target)) {
+            deny(player, "deny.trial-spawner", vars);
+            return;
+        }
+        if (isSpawnerMob(target)) {
+            deny(player, "deny.spawner-mob", vars);
             return;
         }
         if (s.blacklist().contains(target.getType())) {
@@ -287,11 +394,12 @@ public final class CaptureService {
             meta.getPersistentDataContainer().set(keyData, PersistentDataType.BYTE_ARRAY, data);
             meta.getPersistentDataContainer().set(keyType, PersistentDataType.STRING, target.getType().getKey().toString());
             meta.getPersistentDataContainer().set(keyFormat, PersistentDataType.INTEGER, FORMAT);
+            meta.getPersistentDataContainer().set(keyNative, PersistentDataType.BYTE, (byte) 1);
         });
         return egg;
     }
 
-    private void giveEgg(Player player, Location at, ItemStack egg) {
+    public void giveEgg(Player player, Location at, ItemStack egg) {
         if (settings().dropToInventory() && player.isOnline()) {
             Map<Integer, ItemStack> left = player.getInventory().addItem(egg);
             for (ItemStack rest : left.values()) {

@@ -26,6 +26,8 @@ permissions:
       captureegg.capture: true
       captureegg.release: true
       captureegg.bypass.tamed: true
+      captureegg.spawner.extract: true
+      captureegg.spawner.insert: true
       captureegg.version: true
       captureegg.reload: true
   captureegg.use:
@@ -36,6 +38,12 @@ permissions:
     default: true
   captureegg.release:
     description: 放出捕捉蛋裡的生物
+    default: true
+  captureegg.spawner.extract:
+    description: 允許從生怪磚取出捕捉蛋
+    default: true
+  captureegg.spawner.insert:
+    description: 允許將原生捕捉蛋放入生怪磚
     default: true
   captureegg.bypass.tamed:
     description: 可以捕捉別人馴服的寵物
